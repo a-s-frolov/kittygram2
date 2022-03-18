@@ -21,11 +21,28 @@ class Achievement(models.Model):
 
 class Cat(models.Model):
     name = models.CharField(max_length=16)
-    color = models.CharField(max_length=16, choices=CHOICES)
+    color = models.CharField(
+        max_length=16,
+        choices=CHOICES
+    )
     birth_year = models.IntegerField()
     owner = models.ForeignKey(
-        User, related_name='cats', on_delete=models.CASCADE)
-    achievements = models.ManyToManyField(Achievement, through='AchievementCat')
+        User,
+        related_name='cats',
+        on_delete=models.CASCADE
+    )
+    achievements = models.ManyToManyField(
+        Achievement,
+        through='AchievementCat'
+    )
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['name', 'owner'],
+                name='unique_name_owner'
+            )
+        ]
 
     def __str__(self):
         return self.name
